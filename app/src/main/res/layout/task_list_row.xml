@@ -5,32 +5,61 @@
     android:layout_margin="5dp"
     android:backgroundTint="@color/light_green">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="15dp">
+
+
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/txtView"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/txtView"
             android:textSize="15dp"
-            android:textStyle="bold"/>
+            android:layout_marginLeft="10dp"
+            android:text="Test"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/txtViewReminder"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:textSize="12dp"
+            android:textStyle="italic"
+            android:text="No reminder set"
+            android:layout_below="@+id/txtView"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnReminder"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_reminder"
+            android:layout_toRightOf="@+id/txtView"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnEdit"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_edit"/>
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_edit"
+            android:layout_toRightOf="@+id/btnReminder"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnDelete"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_delete"/>
-    </LinearLayout>
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_delete"
+            android:layout_toRightOf="@+id/btnEdit"/>
+
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

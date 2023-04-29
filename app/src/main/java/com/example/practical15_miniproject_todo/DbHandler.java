@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,9 @@ public class DbHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String create_sql = "CREATE TABLE " + Params.TABLE_NAME + "( "
                 + Params.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Params.COL_TEXT + " VARCHAR(200)"
+                + Params.COL_TEXT + " VARCHAR(200), "
+                + Params.COL_REMINDER + " VARCHAR(20) DEFAULT '00:00:00', "
+                + Params.COL_IS_REMAINDER + " INTEGER DEFAULT 0"
                 + ")";
 
         sqLiteDatabase.execSQL(create_sql);
@@ -46,6 +49,10 @@ public class DbHandler extends SQLiteOpenHelper {
         db.insert(Params.TABLE_NAME, null, values);
         Log.d("DBTest", "Successfully inserted");
 
+        Log.d("dbTest", "ID : " + task.getID() + "\n"
+                + "Text : " + task.getText() + "\n"
+                + "Reminder : " + task.getReminder());
+
         //Closing DB
         db.close();
     }
@@ -66,6 +73,8 @@ public class DbHandler extends SQLiteOpenHelper {
                 Task task = new Task();
                 task.setID(Integer.parseInt(cursor.getString(0)));
                 task.setText(cursor.getString(1));
+                task.setReminder(cursor.getString(2));
+                task.setIsRemainder(Integer.parseInt(cursor.getString(3)));
                 taskList.add(task);
             }
             while (cursor.moveToNext());
@@ -111,6 +120,62 @@ public class DbHandler extends SQLiteOpenHelper {
 
         //Delete query
        db.delete(Params.TABLE_NAME, null, null);
+
+        //Closing DB
+        db.close();
+    }
+
+    public int addReminder(Task task) {
+        //Initializing DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        //Updating with new variables
+        values.put(Params.COL_REMINDER, task.getReminder());
+        values.put(Params.COL_IS_REMAINDER, task.getIsRemainder());
+
+        //Update query
+        int rows = db.update(Params.TABLE_NAME, values, Params.KEY_ID + "=?", new String[]{String.valueOf(task.getID())});
+
+        //Closing DB
+        db.close();
+        return rows;
+    }
+
+    public String getReminder(Task task) {
+        //Initializing DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Fetch query
+        String select_query = "SELECT reminder FROM " + Params.TABLE_NAME + " WHERE ID = " + task.getID();
+        Cursor cursor = db.rawQuery(select_query, null , null);
+        cursor.moveToFirst();
+        String reminder = cursor.getString(0);
+        return reminder;
+    }
+
+    public int getIsReminder(Task task) {
+        //Initializing DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Fetch query
+        String select_query = "SELECT is_remainder FROM " + Params.TABLE_NAME + " WHERE ID = " + task.getID();
+        Cursor cursor = db.rawQuery(select_query, null , null);
+        cursor.moveToFirst();
+        int isRemainder = Integer.parseInt(cursor.getString(0));
+        return isRemainder;
+    }
+
+    public void setIsReminder(Task task) {
+        //Initializing DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        //Updating with new variables
+        values.put(Params.COL_IS_REMAINDER, 1);
+
+        //Update query
+        db.update(Params.TABLE_NAME, values, Params.KEY_ID + "=?", new String[]{String.valueOf(task.getID())});
 
         //Closing DB
         db.close();
